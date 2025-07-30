@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Servicios de Eventos (Hotel Lujo)</title>
+    <!-- Carga de Tailwind CSS para estilos base y responsividad -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Fuente Inter para todo el documento */
+        body {
+            font-family: "Inter", sans-serif;
+        }
+
+        /* Estilos personalizados para ocultar los checkboxes nativos y estilizar las etiquetas */
+        .custom-checkbox-container input[type="checkbox"] {
+            /* Oculta el checkbox nativo para que solo se vea la etiqueta estilizada */
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .custom-checkbox-container label {
+            /* Estilo base para la etiqueta, que actuará como el "botón" seleccionable */
+            display: inline-block; /* Permite que los elementos se coloquen uno al lado del otro */
+            padding: 0.85rem 1.5rem; /* Espaciado interno para el "botón" */
+            margin: 0.6rem; /* Margen alrededor de cada "botón" */
+            border-radius: 0.75rem; /* Bordes más redondeados para una apariencia más suave */
+            border: 1px solid #B0D9E8; /* Borde azul muy suave */
+            background-color: #F0F8FA; /* Fondo azul muy claro, casi blanco */
+            color: #2C3E50; /* Color de texto azul oscuro para contraste */
+            cursor: pointer; /* Cambia el cursor para indicar que es clickeable */
+            transition: all 0.3s ease-in-out; /* Transiciones más suaves */
+            font-size: 1.05rem; /* Tamaño de fuente ligeramente más grande */
+            user-select: none; /* Evita que el texto se seleccione al hacer clic */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08); /* Sombra más pronunciada y suave */
+            font-weight: 500; /* Texto un poco más grueso */
+        }
+
+        /* Estilo cuando el checkbox asociado está marcado (':checked') */
+        .custom-checkbox-container input[type="checkbox"]:checked + label {
+            background-color: #A7D9E8; /* Fondo azul medio cuando está seleccionado */
+            border-color: #4A90E2; /* Borde azul más intenso para resaltar */
+            color: #FFFFFF; /* Texto blanco para alto contraste sobre fondo azul */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Sombra más fuerte al seleccionar */
+            transform: translateY(-3px); /* Efecto de levantamiento más pronunciado */
+        }
+
+        /* Estilo al pasar el ratón por encima de la etiqueta */
+        .custom-checkbox-container label:hover {
+            background-color: #E0F2F7; /* Fondo azul muy claro al pasar el ratón */
+            border-color: #79BEE0; /* Borde azul más claro */
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.12); /* Sombra ligeramente más grande al pasar el ratón */
+        }
+
+        /* Estilos para el contenedor principal del formulario para una mejor presentación */
+        .form-container {
+            max-width: 800px; /* Ancho máximo del formulario */
+            margin: 2.5rem auto; /* Centra el formulario y añade más margen */
+            padding: 3rem; /* Más espaciado interno */
+            background-color: #FFFFFF; /* Fondo blanco puro para el contenedor */
+            border-radius: 1rem; /* Bordes aún más redondeados */
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.15), 0 5px 15px -3px rgba(0, 0, 0, 0.08); /* Sombra más profunda y elegante */
+        }
+
+        /* Estilo para los campos de input y select */
+        .form-input-field {
+            border-radius: 0.5rem; /* Bordes redondeados */
+            border: 1px solid #D1D5DB; /* Borde suave */
+            padding: 0.75rem 1rem; /* Más padding */
+            font-size: 1rem;
+            color: #334155; /* Color de texto */
+            background-color: #F9FAFB; /* Fondo ligeramente gris para los campos */
+            transition: all 0.2s ease-in-out;
+        }
+
+        .form-input-field:focus {
+            border-color: #4A90E2; /* Borde azul al enfocar */
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.25); /* Sombra de enfoque azul */
+            outline: none; /* Quitar el contorno por defecto */
+        }
+
+        /* Estilo para el botón de envío */
+        .submit-button {
+            background-color: #4A90E2; /* Azul principal del hotel */
+            color: #FFFFFF; /* Texto blanco */
+            padding: 0.9rem 2rem; /* Más padding */
+            border-radius: 0.75rem; /* Bordes redondeados */
+            font-size: 1.1rem; /* Texto más grande */
+            font-weight: 600; /* Más negrita */
+            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3); /* Sombra azul para el botón */
+            transition: all 0.3s ease-in-out;
+        }
+
+        .submit-button:hover {
+            background-color: #357ABD; /* Azul un poco más oscuro al pasar el ratón */
+            box-shadow: 0 6px 15px rgba(74, 144, 226, 0.4); /* Sombra más grande al pasar el ratón */
+            transform: translateY(-2px); /* Pequeño efecto de levantamiento */
+        }
+
+        /* Estilos para mensajes de estado */
+        #messageBox {
+            border-radius: 0.75rem;
+            padding: 1rem;
+            font-weight: 500;
+        }
+        #messageBox.bg-green-100 { background-color: #D4EDDA; border-color: #28A745; color: #155724; }
+        #messageBox.bg-red-100 { background-color: #F8D7DA; border-color: #DC3545; color: #721C24; }
+        #messageBox.bg-blue-100 { background-color: #CCE5FF; border-color: #007BFF; color: #004085; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="form-container">
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-2 text-center">Hotel Manantial Valencia</h1>
+        <p class="text-lg text-gray-600 mb-8 text-center">
+            Bienvenido a una experiencia de lujo. Por favor, complete el siguiente formulario.
+        </p>
+
+        <form id="eventForm" class="space-y-6">
+            <!-- Campo: Nombre y Apellidos -->
+            <div>
+                <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre y Apellidos</label>
+                <input type="text" id="nombre" name="nombre" placeholder="ej. Camilo Perez" required
+                       class="mt-1 block w-full form-input-field">
+            </div>
+
+            <!-- Campo: Teléfono -->
+            <div>
+                <label for="telefono" class="block text-sm font-medium text-gray-700">Teléfono para contactar (COLOCAR COMO EL EJEMPLO)</label>
+                <input type="tel" id="telefono" name="telefono" placeholder="ej. 584123456789 (con código de país)" required
+                       class="mt-1 block w-full form-input-field">
+            </div>
+
+            <!-- Campo: Correo electrónico -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
+                <input type="email" id="email" name="email" placeholder="ej. ejemplo@gmail.com" required
+                       class="mt-1 block w-full form-input-field">
+            </div>
+
+            <!-- Campo: ¿Qué tipo de evento desea organizar? -->
+            <div>
+                <label for="tipoEvento" class="block text-sm font-medium text-gray-700">¿Qué tipo de evento desea organizar?</label>
+                <input type="text" id="tipoEvento" name="tipoEvento" required
+                       placeholder="ej. cumpleaños, bodas, reuniones, conferencias, fiestas, seminarios, talleres, exposiciones, conciertos, obras de teatro, festivales, congresos, ferias, inauguraciones, ceremonias, graduaciones, eventos deportivos, eventos benéficos, y lanzamientos de productos."
+                       class="mt-1 block w-full form-input-field">
+            </div>
+
+            <!-- Campo: Fecha preferida -->
+            <div>
+                <label for="fechaEvento" class="block text-sm font-medium text-gray-700">¿Cuál es la fecha preferida para su evento?</label>
+                <input type="date" id="fechaEvento" name="fechaEvento" placeholder="ej. 01-01-2026" required
+                       class="mt-1 block w-full form-input-field">
+            </div>
+
+            <!-- Campo: Duración estimada -->
+            <div>
+                <label for="duracionEvento" class="block text-sm font-medium text-gray-700">¿Cuál es la duración estimada del evento?</label>
+                <input type="text" id="duracionEvento" name="duracionEvento" placeholder="ej. 8h" required
+                       class="mt-1 block w-full form-input-field">
+            </div>
+
+            <!-- Campo: Asistentes esperados -->
+            <div>
+                <label for="asistentes" class="block text-sm font-medium text-gray-700">¿Cuántos asistentes espera para su evento?</label>
+                <input type="number" id="asistentes" name="asistentes" placeholder="ej. 60" required
+                       class="mt-1 block w-full form-input-field">
+            </div>
+
+            <!-- Campo: Requiere hospedaje? -->
+            <div>
+                <label for="hospedaje" class="block text-sm font-medium text-gray-700">¿Requiere hospedaje?</label>
+                <select id="hospedaje" name="hospedaje" required
+                        class="mt-1 block w-full form-input-field">
+                    <option value="">Seleccione una opción</option>
+                    <option value="Si">Sí</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+
+            <!-- Campo: Presupuesto estimado -->
+            <div>
+                <label for="presupuesto" class="block text-sm font-medium text-gray-700">¿Presupuesto estimado para el evento?</label>
+                <input type="number" id="presupuesto" name="presupuesto" placeholder="ej. 500" required
+                       class="mt-1 block w-full form-input-field">
+            </div>
+
+            <!-- Campo: Qué espera lograr -->
+            <div>
+                <label for="lograr" class="block text-sm font-medium text-gray-700">¿Qué espera lograr con este evento?</label>
+                <textarea id="lograr" name="lograr" rows="3" placeholder="ej. Celebrar Cumpleaños" required
+                          class="mt-1 block w-full form-input-field"></textarea>
+            </div>
+
+            <!-- Campo DINÁMICO: Servicios de Eventos -->
+            <div>
+                <p class="text-sm font-medium text-gray-700 mb-2">¿Qué tipo de servicios del Departamento de Eventos y Banquetes del Hotel Manantial Valencia le interesan? <span class="text-red-500">*</span></p>
+                <!-- Se añadió 'justify-center' para centrar los botones -->
+                <div id="services-checkbox-container" class="flex flex-wrap items-center justify-center">
+                    <!-- Los checkboxes se insertarán aquí dinámicamente desde JavaScript -->
+                    <p class="text-gray-500">Cargando servicios...</p>
+                </div>
+            </div>
+
+            <!-- Campo: Solicitudes especiales -->
+            <div>
+                <label for="solicitudes" class="block text-sm font-medium text-gray-700">¿Tiene alguna solicitud especial o requisito adicional para su evento?</label>
+                <textarea id="solicitudes" name="solicitudes" rows="2" placeholder="ej. ninguna" required
+                          class="mt-1 block w-full form-input-field"></textarea>
+            </div>
+
+            <!-- Campo: Cómo conoce del Hotel -->
+            <div>
+                <label for="comoConoce" class="block text-sm font-medium text-gray-700">¿A través de qué medios conoce del Hotel Manantial Valencia?</label>
+                <input type="text" id="comoConoce" name="comoConoce" placeholder="ej. (Redes, recomendación u otros)" required
+                       class="mt-1 block w-full form-input-field">
+            </div>
+
+            <!-- Botón de Envío -->
+            <div class="flex justify-end pt-4">
+                <button type="submit"
+                        class="inline-flex justify-center submit-button">
+                    Enviar Solicitud
+                </button>
+            </div>
+        </form>
+
+        <!-- Contenedor para mensajes de estado -->
+        <div id="messageBox" class="mt-4 p-3 rounded-md text-sm hidden" role="alert"></div>
+
+    </div>
+
+    <script>
+        // ¡IMPORTANTE! Reemplaza esta URL con la URL de tu Webhook de n8n.
+        // Puedes obtenerla de un nodo "Webhook" en tu flujo de n8n.
+        const N8N_WEBHOOK_URL = 'https://hotelmanantial.app.n8n.cloud/webhook-test/fad283a9-f587-40e3-a10e-46c124e4d496';
+
+        // Función para mostrar mensajes al usuario (reemplazo de alert())
+        function showMessage(message, type = 'info') {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            messageBox.className = 'mt-4 p-3 rounded-md text-sm'; // Reset classes
+            if (type === 'success') {
+                messageBox.classList.add('bg-green-100', 'text-green-700', 'border', 'border-green-400');
+            } else if (type === 'error') {
+                messageBox.classList.add('bg-red-100', 'text-red-700', 'border', 'border-red-400');
+            } else { // info
+                messageBox.classList.add('bg-blue-100', 'text-blue-700', 'border', 'border-blue-400');
+            }
+            messageBox.classList.remove('hidden');
+        }
+
+        // Función para obtener datos de una hoja de cálculo (usando datos de ejemplo para este formulario)
+        async function fetchServicesFromSheet() {
+            const exampleServices = [
+                "Salones de eventos",
+                "Alimentos y bebidas",
+                "Sonido, tarima e iluminación",
+                "Decoración",
+                "Event Planner",
+                "Hospedaje",
+                "Other"
+            ];
+            return new Promise(resolve => {
+                setTimeout(() => resolve(exampleServices), 500); // Simula un pequeño retraso de red
+            });
+        }
+
+        // Función para renderizar los checkboxes dinámicamente
+        async function renderServicesCheckboxes() {
+            const container = document.getElementById('services-checkbox-container');
+            container.innerHTML = '<p class="text-gray-500">Cargando servicios...</p>';
+
+            try {
+                const services = await fetchServicesFromSheet();
+                container.innerHTML = '';
+
+                if (services.length === 0) {
+                    container.innerHTML = '<p class="text-red-500">No se encontraron servicios.</p>';
+                    return;
+                }
+
+                services.forEach((service, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'custom-checkbox-container';
+
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.id = `service-${index}`;
+                    input.name = 'servicios[]';
+                    input.value = service;
+
+                    const label = document.createElement('label');
+                    label.htmlFor = `service-${index}`;
+                    label.textContent = service;
+
+                    div.appendChild(input);
+                    div.appendChild(label);
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                console.error("Error al renderizar los checkboxes:", error);
+                container.innerHTML = '<p class="text-red-500">Error al cargar los servicios.</p>';
+            }
+        }
+
+        // Event listener para cuando el DOM esté completamente cargado
+        document.addEventListener('DOMContentLoaded', () => {
+            renderServicesCheckboxes();
+
+            const form = document.getElementById('eventForm');
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault(); // Prevenir el envío por defecto del formulario
+
+                if (!N8N_WEBHOOK_URL || N8N_WEBHOOK_URL === 'YOUR_N8N_WEBHOOK_URL_HERE') {
+                    showMessage('¡Error! La URL del Webhook de n8n no está configurada correctamente.', 'error');
+                    return;
+                }
+
+                showMessage('Enviando formulario...', 'info');
+
+                const formData = new FormData(form);
+                const data = {};
+                formData.forEach((value, key) => {
+                    if (key.endsWith('[]')) { // Manejar los arrays de checkboxes
+                        const baseKey = key.slice(0, -2);
+                        if (!data[baseKey]) {
+                            data[baseKey] = [];
+                        }
+                        data[baseKey].push(value);
+                    } else {
+                        data[key] = value;
+                    }
+                });
+
+                // Convertir el array de servicios a una cadena para n8n
+                if (data.servicios) {
+                    data.servicios = data.servicios.join(', ');
+                } else {
+                    data.servicios = '';
+                }
+
+                // Añadir la fecha y hora de envío
+                data.timestamp = new Date().toLocaleString('es-ES', { timeZone: 'America/Caracas' });
+
+                try {
+                    const response = await fetch(N8N_WEBHOOK_URL, {
+                        method: 'POST',
+                        mode: 'no-cors', // Reintroducido para intentar evitar el error "Failed to fetch" de CORS
+                        headers: {
+                            'Content-Type': 'application/json', // Enviando como JSON
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    // Debido a 'no-cors', no podemos verificar response.ok directamente.
+                    // Asumimos éxito si no hay error de red.
+                    showMessage('¡Formulario enviado con éxito a n8n! Los datos deberían aparecer en tu flujo.', 'success');
+                    form.reset();
+                    renderServicesCheckboxes();
+                } catch (error) {
+                    console.error("Error en el envío del formulario a n8n:", error);
+                    showMessage(`Error al enviar el formulario: ${error.message}. Revisa la consola para más detalles.`, 'error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
